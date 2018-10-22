@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
-// A binary tree node has data, pointer to left child
+// A binary root node has data, pointer to left child
 // and a pointer to right child
 struct Node
 {
@@ -9,49 +9,71 @@ struct Node
     struct Node* right;
 };
 
-int isSameStructure(struct Node* a, struct Node* b)
+int Structure(struct Node* root1, struct Node* root2)
 {
     // 1. both empty
-    if (a==NULL && b==NULL)
+    if (root1==NULL && root2==NULL)
         return 1;
     // 2. both non-empty -> compare them
-    if (a!=NULL && b!=NULL)
+    if (root1!=NULL && root2!=NULL)
     {
         return
         (
-            isSameStructure(a->left, b->left) &&
-            isSameStructure(a->right, b->right)
+            Structure(root1->left, root2->left) &&
+            Structure(root1->right, root2->right)
         );
     }
     // 3. one empty, one not -> false
     return 0;
 }
 
-struct Node*Inorder(struct Node*tree){
+struct Node*Inorder(struct Node*root){
 
-if(tree!= NULL){
-    Inorder(tree->left);
-    printf("%d  ",tree->data);
-    Inorder(tree->right);
+if(root!= NULL){
+    Inorder(root->left);
+    printf("%d  ",root->data);
+    Inorder(root->right);
 }
 
 };
-struct Node* insert(struct Node*tree,int val){
+
+int Identical(struct Node* root1, struct Node* root2)
+{
+    /*1. both empty */
+    if (root1==NULL && root2==NULL)
+        return 1;
+
+    /* 2. both non-empty -> compare them */
+    if (root1!=NULL && root2!=NULL)
+    {
+        return
+        (
+            (root1->data == root2->data)&&
+            Identical(root1->left, root2->left) &&
+            Identical(root1->right, root2->right)
+        );
+    }
+
+    /* 3. one empty, one not -> false */
+    return 0;
+}
+
+struct Node* insert(struct Node*root,int val){
 struct Node* ptr,*parentptr,*nodeptr;
 ptr = (struct Node*)malloc(sizeof(struct Node));
 ptr -> data = val;
 ptr -> left = NULL;
 ptr -> right = NULL;
 
-if (tree == NULL){
-    tree = ptr;
-    tree -> left = NULL;
-    tree -> right = NULL;
+if (root == NULL){
+    root = ptr;
+    root -> left = NULL;
+    root -> right = NULL;
 }
 
 else{
     parentptr = NULL;
-    nodeptr = tree;
+    nodeptr = root;
     while(nodeptr!= NULL){
         parentptr = nodeptr;
         if (val < nodeptr->data)
@@ -65,7 +87,7 @@ else{
     else
         parentptr->right = ptr;
 }
-return tree;
+return root;
 };
 
 // Driver code
@@ -75,7 +97,7 @@ printf("***************************************************\n");
     int choice;
     struct Node* root1 = NULL;
     struct Node* root2 = NULL;
-    printf("1.Insert Element in Tree 1\n");
+    printf("1.Insert Element in root 1\n");
     printf("2.To Exit enter -1.\n");
     printf("Enter value of node:");
     scanf("%d",&choice);
@@ -85,7 +107,7 @@ printf("***************************************************\n");
         scanf("%d",&choice);
     }
 printf("***************************************************\n");
-    printf("1.Insert Element in Tree 2\n");
+    printf("1.Insert Element in root 2\n");
     printf("2.To Exit enter -1.\n");
     printf("Enter value of node:");
     scanf("%d",&choice);
@@ -95,19 +117,26 @@ printf("***************************************************\n");
         scanf("%d",&choice);
     }
 printf("\n");
-printf("******************TREE ELEMENTS********************\n");
-printf("Tree one elements:");
+printf("******************root ELEMENTS********************\n");
+printf("Tree1's elements:");
 Inorder(root1);
 printf("\n");
-printf("Tree two elements:");
+printf("Tree2's elements:");
 Inorder(root2);
 printf("\n");
 printf("******************COMPARING************************\n");
-printf("THE RESULT IS .............\n");
-    if (isSameStructure(root1, root2))
-        printf("Both trees have same structure");
+if (root1 == NULL && root2 == NULL)
+    printf("Trees cannot be compared\n");
+else{
+    if (Structure(root1, root2))
+        printf("Both Trees have same structure\n");
     else
-        printf("Trees do not have same structure");
+        printf("Trees do not have same structure\n");
 
+    if (Identical(root1,root2))
+        printf("Both Trees are identical");
+    else
+        printf("Trees are not identical");
+}
     return 0;
 }
